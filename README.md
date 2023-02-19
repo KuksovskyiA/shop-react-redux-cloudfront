@@ -1,4 +1,12 @@
 # React-shop-cloudfront
+# CloudX AWS Practitioner for JS Course - FE Repository
+
+---
+
+- CloudFront URL: https://d1s4z9woafjd94.cloudfront.net
+- S3-Website : http://diy-store-bucket.s3-website-eu-west-1.amazonaws.com
+
+---
 
 This is frontend starter project for nodejs-aws mentoring program. It uses the following technologies:
 
