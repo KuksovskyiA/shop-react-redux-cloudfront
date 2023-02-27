@@ -63,7 +63,7 @@ provider:
 
 functions:
   getProductsList:
-    handler: handlers/getProductsListHandler.getProductsList
+    handler: src/handlers/getProductsListHandler.getProductsList
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
@@ -104,7 +104,7 @@ functions:
 #    environment:
 #      variable2: value2
   getProductsById:
-    handler: handlers/getProductsByIdHandler.getProductsById
+    handler: src/handlers/getProductsByIdHandler.getProductsById
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
