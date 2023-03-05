@@ -1,17 +1,42 @@
 'use strict';
+const { DynamoDB } = require("aws-sdk")
 
-const products = require('src/mockData/products.json');
+const db = new DynamoDB;
+const productTable = process.env.TABLE_PRODUCTS;
+const stocksTable = process.env.TABLE_STOCKS;
+
+const getStockProduct = async (productId) => {
+  try {
+    const stockProduct = await db.getItem({
+      TableName: stocksTable,
+      Key: {
+        'product_id': {N: productId}
+      },
+    }).promise();
+
+    return stockProduct.Item.count.N;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 
 module.exports.getProductsList = async (event) => {
   try {
-    //emulating asinc operation
-    const getProductsListPromise = Promise.resolve(products);
+    console.log(event);
+    const productsList = await db.scan({
+      TableName: productTable
+    }).promise();
 
-    const productsList = await getProductsListPromise;
+    const joinedProducts = await Promise.all(
+      productsList.Items.map(async (item) => {
+        item.count = await getStockProduct(item.id.N);
+        return item;
+      })
+    );
 
     return {
       statusCode: 200,
-      body: JSON.stringify(productsList),
+      body: JSON.stringify(joinedProducts),
     };
   } catch (error) {
     return {
