@@ -46,15 +46,15 @@ provider:
             - dynamodb:DeleteItem
           Resource:
             # - "Fn::GetAtt": [products, stocks]
-            - { "Fn::GetAtt": [products, Arn] }
-            - { "Fn::GetAtt": [stocks, Arn] }
+            - { "Fn::GetAtt": [productsTable, Arn] }
+            - { "Fn::GetAtt": [stocksTable, Arn] }
 
 # you can define service wide environment variables here
   environment:
     TABLE_PRODUCTS:
-      Ref: products
+      Ref: productsTable
     TABLE_STOCKS:
-      Ref: stocks
+      Ref: stocksTable
 
 functions:
   getProductsList:
@@ -79,26 +79,26 @@ functions:
 # you can add CloudFormation resource templates here
 resources:
  Resources:
-  products:
+  productsTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: products
+      TableName: productsTable
       AttributeDefinitions:
         - AttributeName: id
-          AttributeType: N
+          AttributeType: S
       KeySchema:
         - AttributeName: id
           KeyType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
-  stocks:
+  stocksTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: stocks
+      TableName: stocksTable
       AttributeDefinitions:
         - AttributeName: product_id
-          AttributeType: N
+          AttributeType: S
       KeySchema:
         - AttributeName: product_id
           KeyType: HASH

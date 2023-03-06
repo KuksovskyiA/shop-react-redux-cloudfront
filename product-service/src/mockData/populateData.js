@@ -18,7 +18,7 @@ const postItem = async (tableName, item) => {
 
 const populateData = async (tableName) => {
     try {
-        const currentData = tableName === 'products' ? products : stocks;
+        const currentData = tableName === 'productsTable' ? products : stocks;
 
         await Promise.all(currentData.map(async (item) => await postItem(tableName, item)));
     } catch (error) {
@@ -26,6 +26,6 @@ const populateData = async (tableName) => {
     }
 };
 
-populateData('products');
-populateData('stocks');
+populateData('productsTable');
+populateData('stocksTable');
 

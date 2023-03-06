@@ -1,20 +1,20 @@
 'use strict';
 const { DynamoDB } = require("aws-sdk")
 
-const db = new DynamoDB;
+const db = new DynamoDB.DocumentClient();
 const productTable = process.env.TABLE_PRODUCTS;
 const stocksTable = process.env.TABLE_STOCKS;
 
-const getStockProduct = async (productId) => {
+const getStockProductCount = async (productId) => {
   try {
-    const stockProduct = await db.getItem({
+    const stockProduct = await db.get({
       TableName: stocksTable,
       Key: {
-        'product_id': {N: productId}
+        'product_id': productId
       },
     }).promise();
 
-    return stockProduct.Item.count.N;
+    return stockProduct.Item.count;
   } catch (error) {
     throw new Error(error);
   }
@@ -29,7 +29,7 @@ module.exports.getProductsList = async (event) => {
 
     const joinedProducts = await Promise.all(
       productsList.Items.map(async (item) => {
-        item.count = await getStockProduct(item.id.N);
+        item.count = await getStockProductCount(item.id);
         return item;
       })
     );

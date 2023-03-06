@@ -1,7 +1,7 @@
 'use strict';
 const { DynamoDB } = require("aws-sdk")
 
-const db = new DynamoDB;
+const db = new DynamoDB.DocumentClient();
 const TableName = process.env.TABLE_PRODUCTS
 
 module.exports.createProduct = async (event) => {
@@ -9,27 +9,27 @@ module.exports.createProduct = async (event) => {
     console.log(event);
     // const { item } = event.body;
     const item = {
-        'id' : {N: '7'},
-        'title' : {S: 'test'},
-        'description':  {S: 'test'},
-        'price': {N: '7'}
+        id : '7567ec4b-b10c-48c5-9345-fc73c48a80a9',
+        title : 'ProductSeven',
+        description: 'Short Product Description7',
+        price: 30
     };
 
     if(!item) {
         return {
           statusCode: 409,
-          body: JSON.stringify({ message: `Product not found` })
+          body: JSON.stringify({ message: `Product not valid` })
         }
     }
 
-    const createdProduct = await db.putItem({
+    await db.put({
       TableName,
       Item: item,
     }).promise();
 
     return {
       statusCode: 200,
-      body: JSON.stringify(createdProduct),
+      body: JSON.stringify({ message: "Product successfully created." }),
     };
   } catch (error) {
     return {

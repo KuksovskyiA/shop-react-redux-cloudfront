@@ -1,28 +1,28 @@
 'use strict';
 const { DynamoDB } = require("aws-sdk")
 
-const db = new DynamoDB;
+const db = new DynamoDB.DocumentClient();
 const productTable = process.env.TABLE_PRODUCTS;
 const stocksTable = process.env.TABLE_STOCKS;
 
 const joinedProducts = async (productId) => {
   try {
-    const product = await db.getItem({
+    const product = await db.get({
       TableName: productTable,
       Key: {
-        'id': {N: productId}
+        'id': productId
       },
     }).promise();
 
-    const stockProduct = await db.getItem({
+    const stockProduct = await db.get({
       TableName: stocksTable,
       Key: {
-        'product_id': {N: productId}
+        'product_id': productId
       },
     }).promise();
 
     product.Item.count = stockProduct.Item.count;
-    return product;
+    return product.Item;
   } catch (error) {
     console.log(error);
   }
