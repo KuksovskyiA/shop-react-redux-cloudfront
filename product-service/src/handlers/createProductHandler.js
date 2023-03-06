@@ -1,21 +1,28 @@
 'use strict';
-const { DynamoDB } = require("aws-sdk")
+const AWS = require("aws-sdk");
 
-const db = new DynamoDB.DocumentClient();
-const TableName = process.env.TABLE_PRODUCTS
+const db = new AWS.DynamoDB.DocumentClient();
+const productTable = process.env.TABLE_PRODUCTS;
+const stocksTable = process.env.TABLE_STOCKS;
 
 module.exports.createProduct = async (event) => {
   try {
     console.log(event);
-    // const { item } = event.body;
-    const item = {
-        id : '7567ec4b-b10c-48c5-9345-fc73c48a80a9',
-        title : 'ProductSeven',
-        description: 'Short Product Description7',
-        price: 30
+    const { count, price, title, description } = event.body;
+    const getGUID = AWS.util.uuid.v4();
+    const productsTableItem = {
+        id : getGUID,
+        title,
+        description,
+        price
     };
 
-    if(!item) {
+    const stocksTableItem = {
+      product_id: getGUID,
+      count
+    }
+
+    if(!productsTableItem) {
         return {
           statusCode: 409,
           body: JSON.stringify({ message: `Product not valid` })
@@ -23,8 +30,13 @@ module.exports.createProduct = async (event) => {
     }
 
     await db.put({
-      TableName,
-      Item: item,
+      TableName: productTable,
+      Item: productsTableItem,
+    }).promise();
+
+    await db.put({
+      TableName: stocksTable,
+      Item: stocksTableItem,
     }).promise();
 
     return {
