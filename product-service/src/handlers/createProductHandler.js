@@ -5,10 +5,29 @@ const db = new AWS.DynamoDB.DocumentClient();
 const productTable = process.env.TABLE_PRODUCTS;
 const stocksTable = process.env.TABLE_STOCKS;
 
+const putData = async (tableName, item) => {
+  try {
+    await db.put({
+      TableName: tableName,
+      Item: item,
+    }).promise();
+  } catch (error) {
+      throw new Error(error);
+  }
+};
+
 module.exports.createProduct = async (event) => {
   try {
     console.log(event);
-    const { count, price, title, description } = event.body;
+
+    if(!event.body) {
+      return {
+        statusCode: 409,
+        body: JSON.stringify({ message: `Product data is invalid` })
+      }
+    }
+
+    const { count, price, title, description } = JSON.parse(event.body);
     const getGUID = AWS.util.uuid.v4();
     const productsTableItem = {
         id : getGUID,
@@ -22,22 +41,8 @@ module.exports.createProduct = async (event) => {
       count
     }
 
-    if(!productsTableItem) {
-        return {
-          statusCode: 409,
-          body: JSON.stringify({ message: `Product not valid` })
-        }
-    }
-
-    await db.put({
-      TableName: productTable,
-      Item: productsTableItem,
-    }).promise();
-
-    await db.put({
-      TableName: stocksTable,
-      Item: stocksTableItem,
-    }).promise();
+    await putData(productTable, productsTableItem);
+    await putData(stocksTable, stocksTableItem);
 
     return {
       statusCode: 200,

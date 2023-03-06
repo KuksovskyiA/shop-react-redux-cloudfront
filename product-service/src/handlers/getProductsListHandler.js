@@ -7,14 +7,14 @@ const stocksTable = process.env.TABLE_STOCKS;
 
 const getStockProductCount = async (productId) => {
   try {
-    const stockProduct = await db.get({
+    const stockProductData = await db.get({
       TableName: stocksTable,
       Key: {
         'product_id': productId
       },
     }).promise();
 
-    return stockProduct.Item.count;
+    return stockProductData.Item.count;
   } catch (error) {
     throw new Error(error);
   }
@@ -23,11 +23,12 @@ const getStockProductCount = async (productId) => {
 module.exports.getProductsList = async (event) => {
   try {
     console.log(event);
+    
     const productsList = await db.scan({
       TableName: productTable
     }).promise();
 
-    const joinedProducts = await Promise.all(
+    const joinedProductsData = await Promise.all(
       productsList.Items.map(async (item) => {
         item.count = await getStockProductCount(item.id);
         return item;
@@ -36,7 +37,7 @@ module.exports.getProductsList = async (event) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify(joinedProducts),
+      body: JSON.stringify(joinedProductsData),
     };
   } catch (error) {
     return {

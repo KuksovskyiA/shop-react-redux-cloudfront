@@ -5,7 +5,7 @@ const db = new DynamoDB.DocumentClient();
 const productTable = process.env.TABLE_PRODUCTS;
 const stocksTable = process.env.TABLE_STOCKS;
 
-const joinedProducts = async (productId) => {
+const joinedProductData = async (productId) => {
   try {
     const product = await db.get({
       TableName: productTable,
@@ -14,14 +14,14 @@ const joinedProducts = async (productId) => {
       },
     }).promise();
 
-    const stockProduct = await db.get({
+    const stockProductData = await db.get({
       TableName: stocksTable,
       Key: {
         'product_id': productId
       },
     }).promise();
 
-    product.Item.count = stockProduct.Item.count;
+    product.Item.count = stockProductData.Item.count;
     return product.Item;
   } catch (error) {
     console.log(error);
@@ -31,9 +31,9 @@ const joinedProducts = async (productId) => {
 module.exports.getProductsById = async (event) => {
   try {
     console.log(event);
-    const { productId } = event.pathParameters;
 
-    const product = await joinedProducts(productId);
+    const { productId } = event.pathParameters;
+    const product = await joinedProductData(productId);
 
     if(!product) {
       return {
