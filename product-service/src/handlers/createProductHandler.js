@@ -41,8 +41,10 @@ module.exports.createProduct = async (event) => {
       count
     }
 
-    await putData(productTable, productsTableItem);
-    await putData(stocksTable, stocksTableItem);
+    await Promise.all([
+      putData(productTable, productsTableItem),
+      putData(stocksTable, stocksTableItem)
+    ]);
 
     return {
       statusCode: 200,
