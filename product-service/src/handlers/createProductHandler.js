@@ -24,7 +24,7 @@ module.exports.createProduct = async (event) => {
       return {
         statusCode: 409,
         body: JSON.stringify({ message: `Product data is invalid` })
-      }
+      };
     }
 
     const { count, price, title, description } = JSON.parse(event.body);
@@ -39,7 +39,7 @@ module.exports.createProduct = async (event) => {
     const stocksTableItem = {
       product_id: getGUID,
       count
-    }
+    };
 
     await Promise.all([
       putData(productTable, productsTableItem),
@@ -54,6 +54,6 @@ module.exports.createProduct = async (event) => {
     return {
       statusCode: 500,
       body:  JSON.stringify( { message: error.message || 'Something went wrong !!!' })
-    }
+    };
   }
 };

@@ -1,5 +1,5 @@
 'use strict';
-const { DynamoDB } = require("aws-sdk")
+const { DynamoDB } = require("aws-sdk");
 
 const db = new DynamoDB.DocumentClient();
 const productTable = process.env.TABLE_PRODUCTS;
@@ -43,6 +43,6 @@ module.exports.getProductsList = async (event) => {
     return {
       statusCode: 500,
       body:  JSON.stringify( { message: error.message || 'Something went wrong !!!' })
-    }
+    };
   }
 };
