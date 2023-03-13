@@ -1,18 +1,17 @@
 'use strict';
 
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const s3 = new S3Client({ region: 'eu-west-1' });
-const BUCKET = 'uploaded-data-bucket';
 
 module.exports.handler = async (event) => {
     const { name } = event.queryStringParameters;
     const params = {
-        Bucket: BUCKET,
+        Bucket: 'uploaded-data-bucket',
         Key: `uploaded/${name}`,
     };
     try {
-      const command = new GetObjectCommand(params);
+      const command = new PutObjectCommand(params);
       const signedUrl = await getSignedUrl(s3, command);
       return {
           statusCode: 200,

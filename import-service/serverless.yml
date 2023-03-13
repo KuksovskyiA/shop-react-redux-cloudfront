@@ -73,11 +73,11 @@ functions:
     handler: functions/importFileParser/index.handler
     events:
       - s3:
-        bucket: uploaded-data-bucket
-        event: s3:ObjectCreated:*
-        rules: 
-          - prefix: uploaded/
-        existing: true
+          bucket: uploaded-data-bucket
+          event: s3:ObjectCreated:*
+          rules: 
+            - prefix: uploaded/
+          existing: true
 
 # you can add CloudFormation resource templates here
 #resources:
