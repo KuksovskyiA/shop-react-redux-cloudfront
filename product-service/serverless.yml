@@ -75,10 +75,33 @@ functions:
       - httpApi:
           path: /products/{productId}
           method: get
+  catalogBatchProcess:
+    handler: functions/catalogBatchProcess/index.handler
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt: 
+              - catalogBatchProcessQueue
+              - Arn
+          batchSize: 5
 
 # you can add CloudFormation resource templates here
 resources:
  Resources:
+  catalogBatchProcessQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: "catalogBatchProcessQueue"
+  createProductTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: "createProductTopic"
+  createProductSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+        Endpoint: Andrii_Kuksovskyi@epam.com
+        Protocol: email
+        TopicArn: {"Ref": "createProductTopic"}
   productsTable:
     Type: AWS::DynamoDB::Table
     Properties:
