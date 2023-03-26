@@ -2,6 +2,8 @@ service: diy-store
 
 frameworkVersion: "3"
 
+useDotenv: true
+
 provider:
   name: aws
   runtime: nodejs14.x
@@ -16,6 +18,7 @@ plugins:
   # How to build your own plugins: https://www.serverless.com/framework/docs/providers/aws/guide/plugins#service-local-plugin
   - serverless-single-page-app-plugin
   - serverless-s3-cleaner
+  - serverless-dotenv-plugin
 
 custom:
   client:
