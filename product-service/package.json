@@ -1,5 +1,5 @@
 {
-    "name": "import-service",
+    "name": "product-service",
     "version": "1.0.0",
     "description": "",
     "main": "handler.js",
@@ -10,9 +10,6 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@aws-sdk/client-s3": "^3.289.0",
-        "@aws-sdk/client-sqs": "^3.295.0",
-        "@aws-sdk/s3-request-presigner": "^3.289.0",
-        "csv-parser": "^3.0.0"
+        "@aws-sdk/client-sns": "^3.294.0"
     }
 }
