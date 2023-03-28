@@ -4,7 +4,7 @@ const verifyUserToken = async (token) => {
 
     const encodedCreds = token.split(' ')[1];
     const buff = Buffer.from(encodedCreds, 'base64');
-    const plainCreds = buff.toString('utf-8').split(':');
+    const plainCreds = buff.toString('utf-8').split('=');
     const username = plainCreds[0];
     const password = plainCreds[1];
 
@@ -32,9 +32,10 @@ const generatePolicy = async (token, resource, effect = 'Allow') => {
 
 module.exports.handler = async (event, ctx, cb) => {
     try {
-        const authorizationHeader = event?.headers?.Authorization;
+        const isTokenAuthorization = event?.type === 'TOKEN';
         const authorizationToken = event?.authorizationToken;
-        if (!authorizationHeader || !authorizationToken) {
+        
+        if (!isTokenAuthorization || !authorizationToken) {
             cb('Unauthorized');
         }
 
