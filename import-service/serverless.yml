@@ -1,34 +1,13 @@
-# Welcome to Serverless!
-#
-# This file is the main config file for your service.
-# It's very minimal at this point and uses default values.
-# You can always add more config options for more control.
-# We've included some commented out config examples here.
-# Just uncomment any of them to get that config option.
-#
-# For full config options, check the docs:
-#    docs.serverless.com
-#
-# Happy Coding!
-
 service: import-service
-# app and org for use with dashboard.serverless.com
-#app: your-app-name
-#org: your-org-name
-
-# You can pin your service to only deploy with a specific Serverless version
-# Check out our docs for more details
 frameworkVersion: '3'
 
 provider:
   name: aws
   runtime: nodejs14.x
-
-# you can overwrite defaults here
   stage: dev
   region: eu-west-1
 
-# you can add statements to the Lambda function's IAM Role here
+
   iam:
     role:
       statements:
@@ -43,18 +22,6 @@ provider:
           Resource:
             - "arn:aws:s3:::uploaded-data-bucket/*"
 
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
-
-# you can add packaging information here
-#package:
-#  patterns:
-#    - '!exclude-me.js'
-#    - '!exclude-me-dir/**'
-#    - include-me.js
-#    - include-me-dir/**
-
 functions:
   importProductsFile:
     handler: functions/importProductsFile/index.handler
@@ -68,6 +35,9 @@ functions:
                 name: true
           cors:
             origin: '*'
+          authorizer:
+            arn: arn:aws:lambda:eu-west-1:645756223154:function:authorization-service-dev-basicAuthorizer
+            name: authorization-service-dev-basicAuthorizer
 
   importFileParser:
     handler: functions/importFileParser/index.handler
@@ -79,14 +49,13 @@ functions:
             - prefix: uploaded/
           existing: true
 
-# you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+resources:
+  Resources:
+    AuthorizerApiGatewayResponse:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseParameters:
+          "gatewayresponse.header.Access-Control-Allow-Origin": "'*'"
+          "gatewayresponse.header.Access-Control-Allow-Headers": "'*'"
+        ResponseType: "DEFAULT_4XX"
+        RestApiId: "dbmwkl2fzl"
